@@ -106,7 +106,6 @@ public class MapActivity extends FragmentActivity
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        //mLocationRequest.setSmallestDisplacement(0.1F);
         checkLocationPermission();
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
