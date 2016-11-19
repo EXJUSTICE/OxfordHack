@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 //basic map activity, still needs to fetch coordinates from somewhere- DB?SharedPref?
+//http://stackoverflow.com/questions/34582370/how-can-i-show-current-location-on-a-google-map-on-android-marshmallow
 
 public class MapActivity extends FragmentActivity
         implements OnMapReadyCallback,
@@ -81,6 +82,7 @@ public class MapActivity extends FragmentActivity
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         checkLocationPermission();
         map.setMyLocationEnabled(true);
+
     }
 
     @Override
@@ -140,8 +142,20 @@ public class MapActivity extends FragmentActivity
         marker = map.addMarker(new MarkerOptions().position(new LatLng(dLatitude, dLongitude))
                 .title("My Location").icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(dLatitude, dLongitude), 8));
+        //set location and zoom
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(dLatitude, dLongitude), 10
+        ));
 
+    }
+
+    //FOR CHRIS- CALL THIS TO MAKE MARKER AT LOCATION
+    //TO USE: Find the latitude and longitude via getlatitude +getlongitude, then make a point
+    //i.e. new LatLng(latitude, longitude), then call method
+    public void addMarker(LatLng point){
+
+        map.addMarker(new MarkerOptions().position(point)
+                .title("Place of Interest").icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
     }
 
     //required to check for when the user doesnt allow permission
