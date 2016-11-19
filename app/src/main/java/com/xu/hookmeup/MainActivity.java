@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         keywords.put("gallery","culture");
         keywords.put("exhibition","culture");
     }
-""
+
 
     public void fetchEventDetails(String event){
         eventId=event;
