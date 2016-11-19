@@ -20,8 +20,10 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    HashMap<String,String>keywords;
 
     EditText input;
     String location;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
 
         input = (EditText) findViewById(R.id.userInput);
         okbutton = (Button) findViewById(R.id.okbutton);
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    public void checkword(){
+    public void checkword(int i){
         
     };
 
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
     public void fetchEventDetails(String event){
         eventId=event;
