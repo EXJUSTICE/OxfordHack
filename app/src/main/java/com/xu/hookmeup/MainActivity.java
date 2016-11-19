@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     HashMap<String,String>keywords;
+    ArrayList<String> categories;
 
     EditText input;
     String location;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+        setUpDatabase();
 
         input = (EditText) findViewById(R.id.userInput);
         okbutton = (Button) findViewById(R.id.okbutton);
@@ -50,9 +51,10 @@ public class MainActivity extends AppCompatActivity {
         okbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                location = input.getText().toString();
+                location = input.getText().toString().toLowerCase();
                 processlanguage();
                 performJsonRequest();
+
 
 
             }
@@ -65,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
     public void processlanguage(){
         count=0;
         userinput = input.getText().toString();
-        words= userinput.split("\\\\s+");
+        words= userinput.split("\\s+");
         for(int i=0;i<words.length+1;i++){
-            checkword(i);
-            count+=1;
+            checkword(words[i]);
+
         }
         //nothing valid inputted, request rephrase
 
@@ -78,7 +80,11 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    public void checkword(int i){
+    public void checkword (String word){
+        if (keywords.get(word)!=null){
+            categories.add(keywords.get(word));
+            count+=1;
+        }
         
     };
 
@@ -87,6 +93,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void setUpDatabase(){
+        keywords = new HashMap<String,String>();
+        keywords.put("night out","nightlife");
+        keywords.put("coffee","cafe");
+        keywords.put("eat out","restaurant");
+        keywords.put("restaurant", "restaurant");
+        keywords.put("party","nightlife");
+        keywords.put("concert", "nightlife");
+        keywords.put("lunch","restaurant");
+        keywords.put("lecture","lecture");
+        keywords.put("museum","culture");
+        keywords.put("gallery","culture");
+        keywords.put("exhibition","culture");
+    }
+""
 
     public void fetchEventDetails(String event){
         eventId=event;
