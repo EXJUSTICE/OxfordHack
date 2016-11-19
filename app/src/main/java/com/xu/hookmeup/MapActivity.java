@@ -147,7 +147,6 @@ public class MapActivity extends FragmentActivity
     //TO USE: Find the latitude and longitude via getlatitude +getlongitude, then make a point
     //i.e. new LatLng(latitude, longitude), then call method
     public void addMarker(LatLng point){
-
         map.addMarker(new MarkerOptions().position(point)
                 .title("Place of Interest").icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_RED)));

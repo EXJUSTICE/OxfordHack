@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             } else {
-                recognizeText.setText("Error! " + resultCode);
+                recognizeText.setText("Sorry, we didn't catch that.");
             }
 
             listening = false;
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         //nothing valid inputted, request rephrase
 
         if (count == 0) {
-            input.setText("I didn't understand, please rephase the request");
+            input.setText("We didn't understand that. Please rephrase the request.");
         }
 
     }
