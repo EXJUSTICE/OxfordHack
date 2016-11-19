@@ -31,7 +31,9 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     HashMap<String, String> keywords;
-    ArrayList<String> responses;
+    ArrayList<String> responses = new ArrayList<String>();;
+
+    final String FB_ACCESS_TOKEN = "EAAJzDEJrRf4BAJLYOZA20DNpyIYCo3CeC0xsY5ka5vnENNuj45N3X9TXSNTvgCjDCO9bin5dwmNQiTyBqpxm1ukEP4b4rUjSeRB9ZCZBdDBV3vzqRDSKsTqZCULYXhK9b3rSkHfgMekGuNpSGQRZCfzlRrHMaLj3Pko9iSMLspTXqt5LsnPOWjYtBlRkrZAoMZD";
 
     TextView recognizeText;
     EditText input;
@@ -72,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 processlanguage();
                 performJsonRequest();
             }
-
-
         });
 
         button_view = findViewById(R.id.button_view);
@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        new GetContacts().execute();
     }
 
     void startListening() {
@@ -185,23 +186,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public void fetchEventDetails(String event) {
-        eventId = event;
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                event,
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-            /* handle the result */
-                    }
-                }
-        ).executeAsync();
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -235,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground (Void...params){
             HttpHandler sh= new HttpHandler();
             //make request to url and get response, MOD THIS CHRIS
-            String url  XXXXXXXXx;
+            String url = "https://graph.facebook.com/search?q="+location+"&type=event&access_token=" + FB_ACCESS_TOKEN;
             String jsonStr =sh.makeServiceCall(url);
 
             if(jsonStr != null){
@@ -243,16 +227,15 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
                     //Getting JSON Array node, is this correct node chris????????
-                    JSONArray events = jsonObj.getJSONArray("events");
+                    JSONArray events = jsonObj.getJSONArray("data");
 
                     //loop through events in node
 
                     for (int i = 0; i< events.length();i++){
                         JSONObject c = events.getJSONObject(i);
-                        String id = c.getString("id")//???
+                        String id = c.getString("id");//???
+                        System.out.println(id);
                         //add in whatever you want here, chris, derived from the object
-
-                        responses = new ArrayList<String>();
                         responses.add(id);
                     }
 
@@ -268,8 +251,48 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(Void result){
-            super.onPostExecute(Void result);
-            //Listadapter here!?!?!
+            for (int i = 0; i < responses.size(); ++i) {
+                new GetContactsExtra().execute(responses.get(i));
+            }
+        }
+
+    }
+
+    private class GetContactsExtra extends AsyncTask<String,Void,Void> {
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+
+        }
+
+        ArrayList<GraphResponse> grs = new ArrayList<>();
+        public void fetchEventDetails(String event) {
+            eventId = event;
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    event,
+                    null,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            grs.add(response);
+                        }
+                    }
+            ).executeAsync();
+        }
+
+        @Override
+        protected Void doInBackground (String...params){
+            String id = params[0];
+            fetchEventDetails(id);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result){
+            for (GraphResponse gr : grs) {
+                System.out.println(gr.getRawResponse());
+            }
         }
 
     }
