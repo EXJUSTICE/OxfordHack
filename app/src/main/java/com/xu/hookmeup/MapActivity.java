@@ -2,16 +2,10 @@ package com.xu.hookmeup;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
-import com.google.android.gms.location.LocationListener;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +30,8 @@ public class MapActivity extends FragmentActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    //required to check for when the user doesnt allow permission
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap map;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
@@ -53,7 +49,7 @@ public class MapActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
 
             buildGoogleApiClient();
             mGoogleApiClient.connect();
@@ -77,7 +73,7 @@ public class MapActivity extends FragmentActivity
 
     }
 
-    public void setUpMap(){
+    public void setUpMap() {
 
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         checkLocationPermission();
@@ -86,7 +82,7 @@ public class MapActivity extends FragmentActivity
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         if (mGoogleApiClient != null) {
             checkLocationPermission();
@@ -105,14 +101,13 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-        Toast.makeText(this,"onConnected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        //mLocationRequest.setSmallestDisplacement(0.1F);
         checkLocationPermission();
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -133,7 +128,7 @@ public class MapActivity extends FragmentActivity
         mLastLocation = location;
 
         //remove previous current location Marker
-        if (marker != null){
+        if (marker != null) {
             marker.remove();
         }
 
@@ -158,15 +153,12 @@ public class MapActivity extends FragmentActivity
                         .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
     }
 
-    //required to check for when the user doesnt allow permission
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION=99;
-    public boolean checkLocationPermission(){
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
-        {
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //No permission allowed, force user to give one
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             return false;
-        }else {
+        } else {
             return true;
         }
 
