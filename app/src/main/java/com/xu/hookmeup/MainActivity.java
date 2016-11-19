@@ -1,10 +1,13 @@
 package com.xu.hookmeup;
 
 import android.content.Intent;
+import android.nfc.Tag;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +22,16 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     HashMap<String, String> keywords;
+    ArrayList<String> responses;
 
     TextView recognizeText;
     EditText input;
@@ -215,4 +223,55 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    //19112016 20:41 Rest of networking ode
+    private class GetContacts extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground (Void...params){
+            HttpHandler sh= new HttpHandler();
+            //make request to url and get response, MOD THIS CHRIS
+            String url  XXXXXXXXx;
+            String jsonStr =sh.makeServiceCall(url);
+
+            if(jsonStr != null){
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+
+                    //Getting JSON Array node, is this correct node chris????????
+                    JSONArray events = jsonObj.getJSONArray("events");
+
+                    //loop through events in node
+
+                    for (int i = 0; i< events.length();i++){
+                        JSONObject c = events.getJSONObject(i);
+                        String id = c.getString("id")//???
+                        //add in whatever you want here, chris, derived from the object
+
+                        responses = new ArrayList<String>();
+                        responses.add(id);
+                    }
+
+                }catch (final JSONException e){
+                    //DISPLAY ERROR OR LOG
+                }
+
+            }else{
+                //DISPLAY ERROR OR LOG
+
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(Void result);
+            //Listadapter here!?!?!
+        }
+
+    }
+
 }
