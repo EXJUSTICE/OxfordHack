@@ -36,16 +36,16 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     final String FB_ACCESS_TOKEN = "EAAJzDEJrRf4BAJLYOZA20DNpyIYCo3CeC0xsY5ka5vnENNuj45N3X9TXSNTvgCjDCO9bin5dwmNQiTyBqpxm1ukEP4b4rUjSeRB9ZCZBdDBV3vzqRDSKsTqZCULYXhK9b3rSkHfgMekGuNpSGQRZCfzlRrHMaLj3Pko9iSMLspTXqt5LsnPOWjYtBlRkrZAoMZD";
     HashMap<String, String> keywords;
-    ;
+
     ArrayList<String> responses = new ArrayList<String>();
     TextView recognizeText;
-    EditText input;
+
     String location;
-    Button okbutton;
     String eventId;
 
     String userinput;
     String[] words;
+
     int count;
 
     View ring_one, ring_two, ring_three, button_view;

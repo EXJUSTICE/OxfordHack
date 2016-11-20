@@ -24,18 +24,6 @@
         android:textColor="?android:attr/textColorPrimaryInverse"
         android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/userInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:text="Tap to listen"
-        android:textColor="?android:attr/textColorPrimaryInverse"
-        android:textSize="24sp"
-        android:visibility="gone" />
-
     <LinearLayout
         android:id="@+id/button_view"
         android:layout_width="120dp"
@@ -47,7 +35,6 @@
         android:elevation="4dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="horizontal"></LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/ring_one"
