@@ -14,6 +14,7 @@ public class CascadeAnimator {
 
     private ViewGroup viewGroup;
     private List<View> viewList;
+
     private final float offset, offsetIncrement, duration, durationIncrement;
 
     public CascadeAnimator(ViewGroup viewGroup, float offset, float offsetIncrement, float duration, float durationIncrement) {
@@ -138,7 +139,7 @@ public class CascadeAnimator {
 
     public void revertList(final Callback callback) {
 
-        for(int i = 0; i < viewList.size() - 2; i++) {
+        for(int i = 0; i < viewList.size() - 1; i++) {
             View view = viewList.get(i);
             view.animate()
                     .setInterpolator(Interpolators.FOSIInterpolator)
@@ -147,7 +148,7 @@ public class CascadeAnimator {
                     .alpha(0.0f);
         }
 
-        viewList.get(viewList.size()-1)
+        viewList.get(viewList.size() - 1)
                 .animate()
                 .setInterpolator(Interpolators.FOSIInterpolator)
                 .setDuration((long) duration)

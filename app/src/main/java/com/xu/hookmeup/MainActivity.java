@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     View ring_one, ring_two, ring_three, button_view;
     boolean listening = false;
 
-    Animation anim_scale_one, anim_scale_two, anim_scale_three;
+    Animation anim_scale_one, anim_scale_two, anim_scale_three, anim_bounce_button;
     List<View> viewsToAnimate = new ArrayList<>();
 
     ArrayList<String> results;
@@ -70,23 +70,13 @@ public class MainActivity extends AppCompatActivity {
 
         recognizeText = (TextView) findViewById(R.id.recognize_text);
 
-        input = (EditText) findViewById(R.id.userInput);
-        okbutton = (Button) findViewById(R.id.okbutton);
-
-        okbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                location = input.getText().toString();
-                processlanguage();
-                performJsonRequest();
-            }
-        });
-
         button_view = findViewById(R.id.button_view);
 
         ring_one = findViewById(R.id.ring_one);
         ring_two = findViewById(R.id.ring_two);
         ring_three = findViewById(R.id.ring_three);
+
+        anim_bounce_button = AnimationUtils.loadAnimation(this, R.anim.bounce_button);
 
         anim_scale_one = AnimationUtils.loadAnimation(this, R.anim.scale_first);
         anim_scale_two = AnimationUtils.loadAnimation(this, R.anim.scale_second);
@@ -137,9 +127,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (listening) {
+                    button_view.startAnimation(anim_bounce_button);
                     recognizeText.setText("Tap to Listen");
                     listening = false;
                 } else {
+                    button_view.startAnimation(anim_bounce_button);
                     recognizeText.setText("Listening...");
                     startListening();
                     listening = true;
@@ -175,8 +167,13 @@ public class MainActivity extends AppCompatActivity {
                     results = textMatchList;
                     recognizeText.setText(results.get(0));
 
-                    Intent intent = new Intent(this, EventsActivity.class);
-                    startActivity(intent);
+                    cascadeAnimator.revertList(new Callback() {
+                        @Override
+                        public void execute() {
+                            Intent intent = new Intent(MainActivity.this, EventsActivity.class);
+                            startActivity(intent);
+                        }
+                    });
                 }
 
             } else {
@@ -199,35 +196,6 @@ public class MainActivity extends AppCompatActivity {
             ring_two.clearAnimation();
             ring_three.clearAnimation();
         }
-    }
-
-    public void processlanguage() {
-        count = 0;
-        userinput = input.getText().toString();
-        words = userinput.split("\\\\s+");
-        for (int i = 0; i < words.length + 1; i++) {
-            checkword(i);
-            count += 1;
-        }
-        //nothing valid inputted, request rephrase
-
-        if (count == 0) {
-            input.setText("We didn't understand that. Please rephrase the request.");
-        }
-
-    }
-
-    ;
-
-    public void checkword(int i) {
-
-    }
-
-    ;
-
-    public void performJsonRequest() {
-
-
     }
 
     @Override
@@ -263,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             HttpHandler sh = new HttpHandler();
+
             //make request to url and get response, MOD THIS CHRIS
             String url = "https://graph.facebook.com/search?q=" + location + "&type=event&access_token=" + FB_ACCESS_TOKEN;
             String jsonStr = sh.makeServiceCall(url);

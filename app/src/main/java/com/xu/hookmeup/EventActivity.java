@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.squareup.picasso.Picasso;
 import com.xu.hookmeup.Util.Callback;
 import com.xu.hookmeup.Util.CascadeAnimator;
@@ -19,7 +22,7 @@ import com.xu.hookmeup.Util.CascadeAnimator;
  * Created by marcin on 20.11.16.
  */
 
-public class EventActivity extends AppCompatActivity{
+public class EventActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     TextView textName, textCategory, textContent;
     ImageView image;
@@ -54,6 +57,10 @@ public class EventActivity extends AppCompatActivity{
         textName.setText(getIntent().getStringExtra("name"));
         textCategory.setText(getIntent().getStringExtra("category"));
         //textContent.setText(getIntent().getStringExtra("description"));
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map2);
+        mapFragment.getMapAsync(this);
 
         nestedScrollView = (LinearLayout) findViewById(R.id.container_scroll);
 
@@ -108,4 +115,8 @@ public class EventActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
 }
