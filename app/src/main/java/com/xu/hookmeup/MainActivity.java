@@ -86,16 +86,16 @@ public class MainActivity extends AppCompatActivity {
         anim_scale_two = AnimationUtils.loadAnimation(this, R.anim.scale_second);
         anim_scale_three = AnimationUtils.loadAnimation(this, R.anim.scale_third);
 
+        animate(true);
+
         button_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (listening) {
                     recognizeText.setText("Tap to Listen");
-                    animate(false);
                     listening = false;
                 } else {
                     recognizeText.setText("Listening...");
-                    animate(true);
                     startListening();
                     listening = true;
                 }
@@ -133,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!textMatchList.isEmpty()) {
                     results = textMatchList;
                     recognizeText.setText(results.get(0));
+
+                    Intent intent = new Intent(this, EventsActivity.class);
+                    startActivity(intent);
                 }
 
             } else {
