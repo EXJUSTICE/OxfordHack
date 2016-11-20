@@ -36,7 +36,12 @@
             android:name=".MapActivity"
             android:label="@string/title_activity_map"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".EventsActivity">
+                <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".EventsActivity" />
+        </activity>
         <activity
             android:name=".EventsActivity"
             android:label="@string/title_activity_map"
