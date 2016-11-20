@@ -9,8 +9,6 @@ import android.view.animation.LinearInterpolator;
  */
 
 public class Interpolators {
-    // Constants
-    public static final int DURATION = 100;
 
     // Interpolator
     public static final Interpolator FOSIInterpolator = new FastOutSlowInInterpolator();

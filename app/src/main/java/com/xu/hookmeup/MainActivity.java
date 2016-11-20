@@ -1,13 +1,13 @@
 package com.xu.hookmeup;
 
+import android.animation.Animator;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +21,9 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.xu.hookmeup.Util.Callback;
+import com.xu.hookmeup.Util.CascadeAnimator;
+import com.xu.hookmeup.Util.Interpolators;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,13 +31,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    HashMap<String, String> keywords;
-    ArrayList<String> responses = new ArrayList<String>();;
-
     final String FB_ACCESS_TOKEN = "EAAJzDEJrRf4BAJLYOZA20DNpyIYCo3CeC0xsY5ka5vnENNuj45N3X9TXSNTvgCjDCO9bin5dwmNQiTyBqpxm1ukEP4b4rUjSeRB9ZCZBdDBV3vzqRDSKsTqZCULYXhK9b3rSkHfgMekGuNpSGQRZCfzlRrHMaLj3Pko9iSMLspTXqt5LsnPOWjYtBlRkrZAoMZD";
-
+    HashMap<String, String> keywords;
+    ;
+    ArrayList<String> responses = new ArrayList<String>();
     TextView recognizeText;
     EditText input;
     String location;
@@ -49,8 +52,11 @@ public class MainActivity extends AppCompatActivity {
     boolean listening = false;
 
     Animation anim_scale_one, anim_scale_two, anim_scale_three;
+    List<View> viewsToAnimate = new ArrayList<>();
 
     ArrayList<String> results;
+
+    private CascadeAnimator cascadeAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +92,46 @@ public class MainActivity extends AppCompatActivity {
         anim_scale_two = AnimationUtils.loadAnimation(this, R.anim.scale_second);
         anim_scale_three = AnimationUtils.loadAnimation(this, R.anim.scale_third);
 
-        animate(true);
+        viewsToAnimate.add(button_view);
+        viewsToAnimate.add(ring_one);
+        viewsToAnimate.add(ring_two);
+        viewsToAnimate.add(ring_three);
+
+        cascadeAnimator = new CascadeAnimator(viewsToAnimate, 100.0f, 10.0f, 400.0f, 150.0f);
+
+        recognizeText.setAlpha(0.0f);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                recognizeText.animate().alpha(1.0f).setDuration(300).setInterpolator(Interpolators.FOSIInterpolator).setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        cascadeAnimator.animateList(new Callback() {
+                            @Override
+                            public void execute() {
+                                animate(true);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+
+                    }
+                });
+            }
+        }, 1000);
 
         button_view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,14 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
     void startListening() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-        // Specify the calling package to identify your application
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass()
                 .getPackage().getName());
 
-        // Display an hint to the user about what he should say.
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What are you up to?");
-
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
 
@@ -210,22 +251,23 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     //19112016 20:41 Rest of networking ode
-    private class GetContacts extends AsyncTask<Void,Void,Void> {
+    private class GetContacts extends AsyncTask<Void, Void, Void> {
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             super.onPreExecute();
 
         }
 
         @Override
-        protected Void doInBackground (Void...params){
-            HttpHandler sh= new HttpHandler();
+        protected Void doInBackground(Void... params) {
+            HttpHandler sh = new HttpHandler();
             //make request to url and get response, MOD THIS CHRIS
-            String url = "https://graph.facebook.com/search?q="+location+"&type=event&access_token=" + FB_ACCESS_TOKEN;
-            String jsonStr =sh.makeServiceCall(url);
+            String url = "https://graph.facebook.com/search?q=" + location + "&type=event&access_token=" + FB_ACCESS_TOKEN;
+            String jsonStr = sh.makeServiceCall(url);
 
-            if(jsonStr != null){
+            if (jsonStr != null) {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
@@ -234,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //loop through events in node
 
-                    for (int i = 0; i< events.length();i++){
+                    for (int i = 0; i < events.length(); i++) {
                         JSONObject c = events.getJSONObject(i);
                         String id = c.getString("id");//???
                         System.out.println(id);
@@ -242,18 +284,19 @@ public class MainActivity extends AppCompatActivity {
                         responses.add(id);
                     }
 
-                }catch (final JSONException e){
+                } catch (final JSONException e) {
                     //DISPLAY ERROR OR LOG
                 }
 
-            }else{
+            } else {
                 //DISPLAY ERROR OR LOG
 
             }
             return null;
         }
+
         @Override
-        protected void onPostExecute(Void result){
+        protected void onPostExecute(Void result) {
             for (int i = 0; i < responses.size(); ++i) {
                 new GetContactsExtra().execute(responses.get(i));
             }
@@ -261,14 +304,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class GetContactsExtra extends AsyncTask<String,Void,Void> {
+    private class GetContactsExtra extends AsyncTask<String, Void, Void> {
+        ArrayList<GraphResponse> grs = new ArrayList<>();
+
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             super.onPreExecute();
 
         }
 
-        ArrayList<GraphResponse> grs = new ArrayList<>();
         public void fetchEventDetails(String event) {
             eventId = event;
             new GraphRequest(
@@ -285,14 +329,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground (String...params){
+        protected Void doInBackground(String... params) {
             String id = params[0];
             fetchEventDetails(id);
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result){
+        protected void onPostExecute(Void result) {
             for (GraphResponse gr : grs) {
                 System.out.println(gr.getRawResponse());
             }
