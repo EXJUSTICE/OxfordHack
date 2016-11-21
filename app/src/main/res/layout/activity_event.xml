@@ -19,11 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:contentScrim="@android:color/transparent"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
+            app:contentScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll"
-            app:statusBarScrim="@android:color/transparent">
+            app:statusBarScrim="@color/colorPrimaryDark">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

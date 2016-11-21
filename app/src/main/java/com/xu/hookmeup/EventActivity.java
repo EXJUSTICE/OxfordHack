@@ -24,7 +24,7 @@ import com.xu.hookmeup.Util.CascadeAnimator;
 
 public class EventActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    TextView textName, textCategory, textContent;
+    TextView textName, textCategory, textContent, mapTitle;
     ImageView image;
 
     private CascadeAnimator cascadeAnimator;
@@ -53,10 +53,12 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         textName = (TextView) findViewById(R.id.text_name);
         textCategory = (TextView) findViewById(R.id.text_category);
         textContent = (TextView) findViewById(R.id.text_content);
+        mapTitle = (TextView) findViewById(R.id.mapTitle);
 
         textName.setText(getIntent().getStringExtra("name"));
         textCategory.setText(getIntent().getStringExtra("category"));
-        //textContent.setText(getIntent().getStringExtra("description"));
+        mapTitle.setText(getIntent().getStringExtra("category"));
+        textContent.setText(getIntent().getStringExtra("description"));
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map2);

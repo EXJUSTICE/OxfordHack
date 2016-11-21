@@ -32,12 +32,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
     final String FB_ACCESS_TOKEN = "EAAJzDEJrRf4BAJLYOZA20DNpyIYCo3CeC0xsY5ka5vnENNuj45N3X9TXSNTvgCjDCO9bin5dwmNQiTyBqpxm1ukEP4b4rUjSeRB9ZCZBdDBV3vzqRDSKsTqZCULYXhK9b3rSkHfgMekGuNpSGQRZCfzlRrHMaLj3Pko9iSMLspTXqt5LsnPOWjYtBlRkrZAoMZD";
     HashMap<String, String> keywords;
 
-    ArrayList<String> responses = new ArrayList<String>();
+    ArrayList<String> responses = new ArrayList<>();
     TextView recognizeText;
 
     String location;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     String[] words;
 
     int count;
+
+    private static final Pattern sPattern
+            = Pattern.compile("/(in)\\s([A-Z])\\w+/g");
 
     View ring_one, ring_two, ring_three, button_view;
     boolean listening = false;
@@ -66,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Hook Me Up");
+        getSupportActionBar().setTitle("HookMe");
 
         recognizeText = (TextView) findViewById(R.id.recognize_text);
 
@@ -171,6 +176,11 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void execute() {
                             Intent intent = new Intent(MainActivity.this, EventsActivity.class);
+
+                            String[] matches = results.get(0).split(" ");
+
+                            intent.putExtra("place", matches[matches.length-1]);
+
                             startActivity(intent);
                         }
                     });
